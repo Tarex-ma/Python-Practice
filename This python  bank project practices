@@ -1,0 +1,166 @@
+class BankAccount:
+    def __init__(self, account_number, account_holder, initial_balance=0):
+        self.account_number = account_number
+        self.account_holder = account_holder
+        self.balance = initial_balance
+        self.transaction_history = []
+    
+    def deposit(self, amount):
+        if amount > 0:
+            self.balance += amount
+            self.transaction_history.append(f"Deposited: ${amount}")
+            return f"✅ ${amount} deposited successfully!"
+        else:
+            return "❌ Deposit amount must be positive!"
+    
+    def withdraw(self, amount):
+        if amount > 0:
+            if amount <= self.balance:
+                self.balance -= amount
+                self.transaction_history.append(f"Withdrew: ${amount}")
+                return f"✅ ${amount} withdrawn successfully!"
+            else:
+                return "❌ Insufficient funds!"
+        else:
+            return "❌ Withdrawal amount must be positive!"
+    
+    def check_balance(self):
+        return f"💰 Balance: ${self.balance}"
+    
+    def display_transaction_history(self):
+        print(f"\n📋 Transaction History for {self.account_holder}:")
+        if not self.transaction_history:
+            print("   No transactions yet.")
+        else:
+            for transaction in self.transaction_history:
+                print(f"   • {transaction}")
+    
+    def display_account_info(self):
+        print(f"\n👤 Account Information:")
+        print(f"   Holder: {self.account_holder}")
+        print(f"   Account #: {self.account_number}")
+        print(f"   Balance: ${self.balance}")
+
+class Bank:
+    def __init__(self, bank_name):
+        self.bank_name = bank_name
+        self.accounts = {}
+        self.next_account_number = 1001
+    
+    def create_account(self, account_holder, initial_deposit=0):
+        account_number = self.next_account_number
+        self.next_account_number += 1
+        
+        new_account = BankAccount(account_number, account_holder, initial_deposit)
+        self.accounts[account_number] = new_account
+        
+        print(f"\n🎉 Account created successfully!")
+        print(f"   Account Number: {account_number}")
+        print(f"   Account Holder: {account_holder}")
+        print(f"   Initial Balance: ${initial_deposit}")
+        
+        return account_number
+    
+    def get_account(self, account_number):
+        return self.accounts.get(account_number)
+    
+    def display_all_accounts(self):
+        print(f"\n🏦 All Accounts in {self.bank_name}:")
+        if not self.accounts:
+            print("   No accounts yet.")
+        else:
+            for acc_num, account in self.accounts.items():
+                print(f"   #{acc_num}: {account.account_holder} - ${account.balance}")
+
+# Main program to run the bank system
+def main():
+    # Create a bank
+    my_bank = Bank("Python Savings Bank")
+    
+    while True:
+        print("\n" + "="*50)
+        print("🏦 WELCOME TO SIMPLE BANK SYSTEM")
+        print("="*50)
+        print("1. Create New Account")
+        print("2. Deposit Money")
+        print("3. Withdraw Money")
+        print("4. Check Balance")
+        print("5. View Transaction History")
+        print("6. View All Accounts")
+        print("7. Exit")
+        
+        choice = input("\nEnter your choice (1-7): ")
+        
+        if choice == '1':
+            # Create new account
+            name = input("Enter account holder name: ")
+            try:
+                initial_deposit = float(input("Enter initial deposit: $"))
+                my_bank.create_account(name, initial_deposit)
+            except ValueError:
+                print("❌ Please enter a valid amount!")
+        
+        elif choice == '2':
+            # Deposit money
+            try:
+                acc_num = int(input("Enter account number: "))
+                account = my_bank.get_account(acc_num)
+                if account:
+                    amount = float(input("Enter deposit amount: $"))
+                    print(account.deposit(amount))
+                else:
+                    print("❌ Account not found!")
+            except ValueError:
+                print("❌ Please enter valid numbers!")
+        
+        elif choice == '3':
+            # Withdraw money
+            try:
+                acc_num = int(input("Enter account number: "))
+                account = my_bank.get_account(acc_num)
+                if account:
+                    amount = float(input("Enter withdrawal amount: $"))
+                    print(account.withdraw(amount))
+                else:
+                    print("❌ Account not found!")
+            except ValueError:
+                print("❌ Please enter valid numbers!")
+        
+        elif choice == '4':
+            # Check balance
+            try:
+                acc_num = int(input("Enter account number: "))
+                account = my_bank.get_account(acc_num)
+                if account:
+                    print(account.check_balance())
+                else:
+                    print("❌ Account not found!")
+            except ValueError:
+                print("❌ Please enter a valid account number!")
+        
+        elif choice == '5':
+            # Transaction history
+            try:
+                acc_num = int(input("Enter account number: "))
+                account = my_bank.get_account(acc_num)
+                if account:
+                    account.display_transaction_history()
+                else:
+                    print("❌ Account not found!")
+            except ValueError:
+                print("❌ Please enter a valid account number!")
+        
+        elif choice == '6':
+            # View all accounts
+            my_bank.display_all_accounts()
+        
+        elif choice == '7':
+            print("👋 Thank you for using Simple Bank System!")
+            break
+        
+        else:
+            print("❌ Invalid choice! Please enter 1-7.")
+
+# Run the bank system
+if __name__ == "__main__":
+    main()
